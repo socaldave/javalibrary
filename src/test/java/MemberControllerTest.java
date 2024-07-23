@@ -75,13 +75,18 @@ class MemberControllerTest {
     void createMember_Success() {
         Member member = new Member();
         member.setId(1L);
+        member.setUsername("johndoe");
+        member.setEmail("john@example.com");
+        member.setAddress("123 Main St");
+        member.setPhoneNumber("1234567890");
 
         when(memberRepository.save(any(Member.class))).thenReturn(member);
 
-        Member result = memberController.createMember(member);
+        ResponseEntity<Member> response = (ResponseEntity<Member>) memberController.createMember(member);
+        Member result = response.getBody();
 
         assertEquals(1L, result.getId());
-        verify(memberRepository, times(1)).save(member);
+        verify(memberRepository, times(1)).save(any(Member.class));
     }
 
     @Test

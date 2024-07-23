@@ -9,11 +9,14 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/members")
@@ -61,8 +64,18 @@ public class MemberController {
                             schema = @Schema(implementation = Member.class))})
     })
     @PostMapping
-    public Member createMember(@RequestBody Member member) {
-        return memberRepository.save(member);
+    public ResponseEntity<?> createMember(@Valid @RequestBody Member member) {
+        Optional<Member> existingMember = memberRepository.findByUsername(member.getUsername());
+        if (existingMember.isPresent()) {
+            return ResponseEntity.badRequest().body("Username already exists.");
+        }
+
+        try {
+            Member savedMember = memberRepository.save(member);
+            return ResponseEntity.ok(savedMember);
+        } catch (DataIntegrityViolationException e) {
+            return ResponseEntity.badRequest().body("Error saving member.");
+        }
     }
 
 

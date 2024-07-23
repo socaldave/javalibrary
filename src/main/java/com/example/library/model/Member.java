@@ -1,6 +1,9 @@
 package com.example.library.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
 import java.util.List;
 
 @Entity
@@ -9,6 +12,9 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull
+    @Size(min = 3, max = 50)
+    @Column(unique = true)
     private String username;
     private String email;
     private String address;
