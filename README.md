@@ -31,6 +31,42 @@ This is a Library Management System built using Java 17+, Spring Boot, and Gradl
     - `lendDate`: Date when the book was lent out
     - `returnDate`: Date when the book is expected to be returned
 
+Integrated Database Schematic (Handled Automatically)
+```sh
+CREATE TABLE members (
+id BIGSERIAL PRIMARY KEY,
+username VARCHAR(50) NOT NULL UNIQUE,
+email VARCHAR(100) NOT NULL,
+address VARCHAR(255) NOT NULL,
+phone_number VARCHAR(20) NOT NULL
+);
+
+CREATE TABLE authors (
+id BIGSERIAL PRIMARY KEY,
+name VARCHAR(255) NOT NULL,
+date_of_birth DATE NOT NULL
+);
+
+CREATE TABLE books (
+id BIGSERIAL PRIMARY KEY,
+title VARCHAR(255) NOT NULL,
+genre VARCHAR(50) NOT NULL,
+price DECIMAL(10, 2) NOT NULL,
+author_id BIGINT NOT NULL,
+CONSTRAINT fk_author FOREIGN KEY(author_id) REFERENCES authors(id)
+);
+
+CREATE TABLE loans (
+id BIGSERIAL PRIMARY KEY,
+member_id BIGINT NOT NULL,
+book_id BIGINT NOT NULL,
+lend_date DATE NOT NULL,
+return_date DATE NOT NULL,
+CONSTRAINT fk_member FOREIGN KEY(member_id) REFERENCES members(id),
+CONSTRAINT fk_book FOREIGN KEY(book_id) REFERENCES books(id)
+);
+```
+
 ## Prerequisites
 
 - Java 17 or later
