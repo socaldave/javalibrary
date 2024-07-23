@@ -6,6 +6,11 @@ import com.example.library.model.Member;
 import com.example.library.repository.LoanRepository;
 import com.example.library.repository.MemberRepository;
 import com.example.library.repository.BookRepository;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,11 +31,27 @@ public class LoanController {
     @Autowired
     private BookRepository bookRepository;
 
+    @Operation(summary = "Get a list of all loans")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Found the loans",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Loan.class))}),
+            @ApiResponse(responseCode = "404", description = "Loans not found",
+                    content = @Content)
+    })
     @GetMapping
     public List<Loan> getAllLoans() {
         return loanRepository.findAll();
     }
 
+    @Operation(summary = "Get a loan by ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Found the loan",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Loan.class))}),
+            @ApiResponse(responseCode = "404", description = "Loan not found",
+                    content = @Content)
+    })
     @GetMapping("/{id}")
     public ResponseEntity<Loan> getLoanById(@PathVariable Long id) {
         Loan loan = loanRepository.findById(id)
@@ -38,6 +59,12 @@ public class LoanController {
         return ResponseEntity.ok(loan);
     }
 
+    @Operation(summary = "Create a new loan")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Loan created",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Loan.class))})
+    })
     @PostMapping
     public ResponseEntity<Object> createLoan(@RequestBody Loan loan) {
         Member member = memberRepository.findById(loan.getMemberId())
@@ -66,6 +93,14 @@ public class LoanController {
         return ResponseEntity.ok(savedLoan);
     }
 
+    @Operation(summary = "Update an existing loan")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Loan updated",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Loan.class))}),
+            @ApiResponse(responseCode = "404", description = "Loan not found",
+                    content = @Content)
+    })
     @PutMapping("/{id}")
     public ResponseEntity<Loan> updateLoan(@PathVariable Long id, @RequestBody Loan loanDetails) {
         Loan loan = loanRepository.findById(id)
@@ -83,6 +118,13 @@ public class LoanController {
         return ResponseEntity.ok(updatedLoan);
     }
 
+    @Operation(summary = "Delete a loan by ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Loan deleted",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "Loan not found",
+                    content = @Content)
+    })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteLoan(@PathVariable Long id) {
         Loan loan = loanRepository.findById(id)

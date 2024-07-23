@@ -52,7 +52,7 @@ class LoanControllerTest {
         member.setId(1L);
         member.setLoanIds(new ArrayList<>());
 
-        when(memberRepository.findById(anyLong())).thenReturn(Optionavl.of(member));
+        when(memberRepository.findById(anyLong())).thenReturn(Optional.of(member));
         when(bookRepository.findById(anyLong())).thenReturn(Optional.of(new Book()));
         when(loanRepository.save(any(Loan.class))).thenAnswer(i -> {
             Loan l = i.getArgument(0);
